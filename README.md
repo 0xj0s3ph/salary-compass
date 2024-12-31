@@ -107,4 +107,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Your Name - [@TheJosephJu](https://twitter.com/TheJosephJu)
 
-Project Link: [https://github.com/yourusername/salary-compass](https://github.com/0xj0s3ph/salary-compass)
+Project Link: [https://github.com/0xj0s3ph/salary-compass](https://github.com/0xj0s3ph/salary-compass)
