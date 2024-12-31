@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import {
   Card,
@@ -19,23 +20,35 @@ import {
 } from "@/components/ui/table";
 
 const SalaryCalculator = () => {
-  const [baseSalary, setBaseSalary] = useState<string>("");
-  const [overtimePay, setOvertimePay] = useState<string>("");
+  // State for base salary range
+  const [baseSalaryMin, setBaseSalaryMin] = useState<string>("200000");
+  const [baseSalaryMax, setBaseSalaryMax] = useState<string>("400000");
+
+  // State for overtime pay range
+  const [overtimeMin, setOvertimeMin] = useState<string>("20000");
+  const [overtimeMax, setOvertimeMax] = useState<string>("50000");
+
+  // State for bonus
   const [bonus, setBonus] = useState<string>("");
 
   // Convert string inputs to numbers, defaulting to 0 if empty
-  const baseAmount = parseFloat(baseSalary) || 0;
-  const overtimeAmount = parseFloat(overtimePay) || 0;
+  const baseMin = parseFloat(baseSalaryMin) || 0;
+  const baseMax = parseFloat(baseSalaryMax) || 0;
+  const overtimeMinAmount = parseFloat(overtimeMin) || 0;
+  const overtimeMaxAmount = parseFloat(overtimeMax) || 0;
   const bonusAmount = parseFloat(bonus) || 0;
 
-  // Calculate monthly salary
-  const monthlyTotal = baseAmount + overtimeAmount;
+  // Calculate monthly salary ranges
+  const monthlyMin = baseMin + overtimeMinAmount;
+  const monthlyMax = baseMax + overtimeMaxAmount;
 
   // Calculate annual salary including bonus
-  const annualTotal = monthlyTotal * 12 + bonusAmount;
+  const annualMin = monthlyMin * 12 + bonusAmount;
+  const annualMax = monthlyMax * 12 + bonusAmount;
 
   // Calculate hourly rate (assuming 160 working hours per month)
-  const hourlyRate = monthlyTotal / 160;
+  const hourlyMin = monthlyMin / 160;
+  const hourlyMax = monthlyMax / 160;
 
   // Format numbers with commas and decimals
   const formatCurrency = (amount: number) => {
@@ -46,6 +59,11 @@ const SalaryCalculator = () => {
     }).format(amount);
   };
 
+  // Format range values
+  const formatRange = (min: number, max: number) => {
+    return `${formatCurrency(min)} 〜 ${formatCurrency(max)}`;
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -54,27 +72,77 @@ const SalaryCalculator = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Input Form */}
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           <div className="space-y-2">
-            <Label htmlFor="baseSalary">基本給</Label>
-            <Input
-              id="baseSalary"
-              type="number"
-              placeholder="例: 250000"
-              value={baseSalary}
-              onChange={(e) => setBaseSalary(e.target.value)}
-            />
+            <Label>基本給</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="baseSalaryMin"
+                  className="text-sm text-muted-foreground"
+                >
+                  最小
+                </Label>
+                <Input
+                  id="baseSalaryMin"
+                  type="number"
+                  placeholder="例: 200000"
+                  value={baseSalaryMin}
+                  onChange={(e) => setBaseSalaryMin(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="baseSalaryMax"
+                  className="text-sm text-muted-foreground"
+                >
+                  最大
+                </Label>
+                <Input
+                  id="baseSalaryMax"
+                  type="number"
+                  placeholder="例: 400000"
+                  value={baseSalaryMax}
+                  onChange={(e) => setBaseSalaryMax(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="overtimePay">固定残業代</Label>
-            <Input
-              id="overtimePay"
-              type="number"
-              placeholder="例: 30000"
-              value={overtimePay}
-              onChange={(e) => setOvertimePay(e.target.value)}
-            />
+            <Label>固定残業代</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="overtimeMin"
+                  className="text-sm text-muted-foreground"
+                >
+                  最小
+                </Label>
+                <Input
+                  id="overtimeMin"
+                  type="number"
+                  placeholder="例: 20000"
+                  value={overtimeMin}
+                  onChange={(e) => setOvertimeMin(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="overtimeMax"
+                  className="text-sm text-muted-foreground"
+                >
+                  最大
+                </Label>
+                <Input
+                  id="overtimeMax"
+                  type="number"
+                  placeholder="例: 50000"
+                  value={overtimeMax}
+                  onChange={(e) => setOvertimeMax(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -101,19 +169,19 @@ const SalaryCalculator = () => {
             <TableRow>
               <TableCell>月額給与 (基本給 + 固定残業代)</TableCell>
               <TableCell className="text-right font-medium">
-                {formatCurrency(monthlyTotal)}
+                {formatRange(monthlyMin, monthlyMax)}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>時給 (想定労働時間: 月160時間)</TableCell>
               <TableCell className="text-right font-medium">
-                {formatCurrency(hourlyRate)}
+                {formatRange(hourlyMin, hourlyMax)}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell>年収 (賞与含む)</TableCell>
               <TableCell className="text-right font-medium">
-                {formatCurrency(annualTotal)}
+                {formatRange(annualMin, annualMax)}
               </TableCell>
             </TableRow>
           </TableBody>
